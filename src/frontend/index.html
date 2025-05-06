@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- define el tipo de codificacion -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- configuracion visual en dispositivos moviles -->
+    <title>Document</title>
+    <!-- titulo de la pagina en la pestaña del navegador -->
+</head>
+
+<body>
+    <h1>Gestion de personas</h1>
+
+    <form id="personaForm">
+        <!-- formulario par crear o editar personas -->
+        <input type="hidden" id="id_persona">
+        <!-- campo oculto para almacenar el ID cuando se edita una persona -->
+
+        <!-- contenedor <div> utilizado para agrupar el label y el input, 
+        lo cual permite aplicar margenes, estilos o estructuras en bloque facilmente. 
+        El <label> proporciona un texto descriptivo para el campo y se asocia al input mediante el atributo 'for',
+        mejorando la accesibilidad y la usabilidad del formulario.  -->
+
+        <div>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" required>
+        </div>
+        <div>
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" required>
+        </div>
+        <div>
+            <label for="tipo_identificacion">Tipo de Identificacion:</label>
+            <select id="tipo_identificacion" required>
+                <option value="CC">Cedula de Ciudadania</option>
+                <option value="TI">Tarjeta de Identidad</option>
+                <option value="CE">Cedula de Extranjeria</option>
+            </select>
+        </div>
+        <div>
+            <label for="nuip">Numero de Identificacion:</label>
+            <input type="number" id="nuip" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+        </div>
+        <div>
+            <label for="clave">Contraseña:</label>
+            <input type="password" id="clave" required>
+        </div>
+        <div>
+            <label for="salario">Salario:</label>
+            <input type="bumber" id="salario" step="0.01" required>
+        </div>
+        <div>
+            <label for="activo">Activo:</label>
+            <input type="checkbox" id="activo">
+        </div>
+
+        <!-- seccion para manejo de imagenes -->
+
+        <div>
+            <label for="imagen">Imagen:</label>
+            <input type="file" id="imagen" accept="image/*">
+            <img id="previewimagen" style="max-width: 200px; display: none;">
+        </div>
+
+        <button type="submit" id="btnGuardar">Guardar</button>
+        <button type="button" id="btnCancelar">Cancelar</button>
+    </form>
+
+    <!-- tabla para mostrar las personas -->
+    <table id="tablaPersonas" style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #ddd; text-align: center; padding: 8px;">ID</th>
+                <th style="border: 1px solid #ddd; text-align: center; padding: 8px;">Nombre</th>
+                <th style="border: 1px solid #ddd; text-align: center; padding: 8px;">Apellido</th>
+                <th style="border: 1px solid #ddd; text-align: center; padding: 8px;">Email</th>
+                <th style="border: 1px solid #ddd; text-align: center; padding: 8px;">Imagen</th>
+                <th style="border: 1px solid #ddd; text-align: center; padding: 8px;">Acciones</th>
+            </tr>
+        </thead>
+        <!--<thead> define la cabecera de la tabla, utilizada para describir el contenido de cada columna.
+       cada <th> representa un encabezado de columna, con estilos aplicados para mejorar la presentacion:
+       - borde fino y gris claro alrededor de cada celda.
+       -alineacion centrada del texto.
+       -espaciado interno (padding) para una mejor legibilidad
+       las columnas muestran: Id, Nombre, Apellido Email, Imagen asociada y las acciones disponibles (como editar o eliminar).-->
+
+        <tbody id="tablaPersonasBody">
+            <!-- los atos se cargan dinamicamente -->
+        </tbody>
+    </table>
+    <script src="index.js"></script>
+    <!-- inclusion del archivo javascript externo 'index.js'.
+     Este scrip contiene la logica del CRUD (Crear, leer, actulizar y eliminar), asi como la interaccion con el formulario y la tabla.
+     Al cargarlo al final del body, se asegura que el DOM este completamente disponible cuando el script se ejecute. -->
+</body>
+
+</html>
