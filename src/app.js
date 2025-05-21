@@ -27,5 +27,7 @@ app.use('/api/imagenes', imagenesRoutes);
 app.use('/api/personas', require('./routes/personas.routes'));
 //asocia todas las rutas de pesosnas bajo el prefijo /api/personas
 
+app.use('/api/proveedores', require('./routes/proveedores.routes'));
+
 module.exports = app;
 //exportar la app configurada para ser utilizada por el archivo principal del servidor (en este caso, el archivo server.js)

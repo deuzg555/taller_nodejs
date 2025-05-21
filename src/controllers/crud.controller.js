@@ -42,7 +42,7 @@ class CrudController {
     async actualizar(tabla, idcampo, id, data){
         try{
             // ejecuta una consulta UPDATE con los datos nuevos
-            const [resultado] = await db.query(`UPDATE ?? SET ?? WHERE ?? = ?`, [tabla, data,  idcampo, id]);
+            const [resultado] = await db.query(`UPDATE ?? SET ? WHERE ?? = ?`, [tabla, data,  idcampo, id]);
             //si no se afecto ninguna fila es que el registro no existia
             if(resultado.affectedRows === 0){
                 throw new error ('registro no encontrado')

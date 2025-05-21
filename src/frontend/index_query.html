@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de personas e imagens</title>
+    <link rel="stylesheet" href="index_query.css">
+</head>
+<body>
+    <h1>gestion de personas</h1>
+
+    <!-- formulario para crear/editar personas -->
+     <form id="personaForm">
+        <input type="hidden" id="id_personas">
+        <!-- campo oculto para almacenar el ID cuando se edita una persona -->
+
+         <!-- 
+        contenedor <div> utilizando para mantener la estructura del formulario y facilitar el estilo con margenes  o diseño en bloque.
+        en esta variante, el <label> coontiene directamente al <input>, lo que simplifica el HTML y asegura la asociacion entre ambos sin nesecidad del atributo 'for'.
+        esta estructura tambien mejora la accesibilidad y permite que al hacer click sobre el texto del label se active el campo de entrada. -->
+
+        <div>
+            <label>Nombre:
+                <input type="text" id="nombre" required>
+            </label>
+        </div>
+
+        <div>
+            <label>Apellido:
+                <input type="text" id="apellido" required>
+            </label>
+        </div>
+
+        <div>
+            <label>Tipo de Identificacion:
+                <select id="tipo_identificacion" required>
+                    <option value="CC">Cedula de Ciudadania</option>
+                    <option value="TI">Tarjeta de Identidad</option>
+                    <option value="CE">Cedula de Extranjeria</option>
+                </select>
+            </label>
+        </div>
+
+        <div>
+            <label>Numero de Identificacion:
+                <input type="number" id="nuip" required>
+            </label>
+        </div>
+
+        <div>
+            <label>Email:
+                <input type="email" id="email" required>
+            </label>
+        </div>
+
+        <div>
+            <label>Contraseña:
+                <input type="password" id="clave" required>
+            </label>
+        </div>
+
+        <div>
+            <label>Salario:
+                <input type="number" id="salario" step="0.01" required>
+            </label>
+        </div>
+
+        <div>
+            <label>Activo:
+                <input type="checkbox" id="activo">
+            </label>
+        </div>
+
+        <!-- seccion para manejo de imagenes -->
+         <div>
+            <label for="imagen">Imagen:</label>
+            <input type="file" id="imagen" accept="image/*">
+            <img id="previewImagen" >
+         </div>
+
+         <button type="submit" id="btnGuardar">Guardar</button>
+         <button type="button" id="btnCancelar">Cancelar</button>
+     </form>
+
+     <!-- tabla para mostar las personas -->
+      <table id="tablaPersonas">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Imagen</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <!-- <thead define la cabecera de la tabla, utilizada para describir el contenido de cada columna.
+         cada <th> representa un encabezado de columna, con estilos aplicados para mejorar la presentacion:
+        - borde fino y gris claro alrededor de cada celda.
+        - alineacion centrada del texto.
+        - espaciado interno (padding) para una mejor legibilidad.
+        las columnas muestra: ID,nombre, apellido, email, imagen asociada y las acciones disponibles(como editar o eliminar)-->
+
+        <tbody id="tablaPersonasBody">
+            <!-- los datos se cargan dinamicamente -->
+        </tbody>
+      </table>
+
+      <template id="template">
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <button class="btn-editar">Editar</button>
+                    <button class="btn-eliminar">Eliminar</button>
+                </td>
+            </tr>
+      </template>
+      <!-- elemento <templade> que actua como una plantilla HTML reutilizable.
+        define una fila(<tr>) con celdas vacias (<td>) que seran rellenadas dinamicamente con datos de personas desde javascrip.
+        esta tecnica permite  clonar la fila cuando se nesecita mostrar nuevos registros sin tener que escribir el HTML desde cero cada vez.
+        las ultimas celdas incluyen botones "editar" y "eliminar" con clases especificas para identificar y manejar eventos desde el script
+        este enfoque mejora la eficiencia del codigo y mantiene el HTML mas limpio. -->
+
+    <script src="index_query.js"></script>
+    <!-- inclusion del archivo javascrip externo 'index.js'
+     este scrip contiene la logica del crud(crear, leer, actualizar y eliminar ), asi como la interaccion con el formulario y la tabla.
+     al cargarlo al final del body, se asegura que el DOM este completamente disponible cuando el script se ejecute -->
+     </form>
+</body>
+</html>

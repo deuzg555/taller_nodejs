@@ -11,18 +11,18 @@ const CrudController = require('../controllers/crud.controller')
 const curd = new CrudController();
 
 //definir el nombre de la tabla en la base de datos sobre la que operara
-const tabla = 'personas';
+const tabla = 'proveedores';
 
 //definir el nombre del campo identififcador unico de la tabla
-const idCampo = 'id_personas';
+const idCampo = 'id_proveedores';
 
 router.get('/', async(req, res) => {
     try{
         //utilizar el metodo obtenerTodos del controlador para traer todos los registros
-        const personas = await curd.obtenerTodos(tabla);
+        const proveedores = await curd.obtenerTodos(tabla);
 
         //repuesta con el arreglo de personas en formato JSON
-        res.json(personas);
+        res.json(proveedores);
     }catch(error){
         //si hay un error, se responde con codigo 500 y el mensaje de error
     }
@@ -32,10 +32,10 @@ router.get('/', async(req, res) => {
 router.get('/:id', async(req, res) => {
     try{
         //utilizar el metodo obtenerUno con el id recibido en la url
-        const persona = await curd.obtenerUno(tabla, idCampo, req.params.id);
+        const proveedores = await curd.obtenerUno(tabla, idCampo, req.params.id);
 
         //respuesta con los datos de la persona del formato JSON
-        res.json(persona);
+        res.json(proveedores);
     }catch(error){
         //manejar errores del servidor
         res.status(500).json({error: error.message});
@@ -46,10 +46,10 @@ router.get('/:id', async(req, res) => {
 router.post('/', async (req, res) => {
     try{
         //utlizar el metodo crear con los datos enviados en el cuerpo del request
-        const nuevaPersona = await curd.crear(tabla, req.body);
+        const nuevoProveedor = await curd.crear(tabla, req.body);
 
         //respuesta con el nuevo registro creado y codigo 201 (creado)
-        res.status(201).json(nuevaPersona)
+        res.status(201).json(nuevoProveedor)
     } catch(error){
         res.status(500).json({error: error.message});
     }
@@ -59,10 +59,10 @@ router.post('/', async (req, res) => {
 router.put('/:id', async(req, res) => {
     try{
         //utilizar el metodo actualizar con ID y los nuevos datos del cuerpo
-        const personaActualizada = await curd.actualizar(tabla, idCampo, req.params.id, req.body);
+        const proveedorActualizado = await curd.actualizar(tabla, idCampo, req.params.id, req.body);
 
         //respuesta con el registro actualizado
-        res.json(personaActualizada);
+        res.json(proveedorActualizado);
     }catch(error){
         //manejar errores del servidor
         res.status(500).json({error: error.message});

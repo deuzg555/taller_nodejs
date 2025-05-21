@@ -5,10 +5,10 @@ const db = require('../config/db');
 class ImagenesController {
 
     //metodo para subir o actualizar una imagen codificada en base64  a un registro con imagenes
-    async subirImagen(tabla, campoId, id, ImagenesBase64) {
+    async subirImagen(tabla, campoId, id, imagenesBase64) {
         try {
             //consultar si el registro con Id existe
-            const [registro] = await db.query(`SELECT * FROM ?? HWERE ?? = ?`, [tabla, campoId, id]);
+            const [registro] = await db.query(`SELECT * FROM ?? WHERE ?? = ?`, [tabla, campoId, id]);
 
             //si no existe, retornar un error
             if (registro.length === 0) {
@@ -16,7 +16,7 @@ class ImagenesController {
             }
 
             //convertimos la imagen de base64 a un buffer (formato binario)
-            const bufferImagen = buffer.from(ImagenesBase64, 'base64');
+            const bufferImagen = Buffer.from(imagenesBase64, 'base64');
 
             // crear la consulta para actualizar el campo 'imagen' del registro
             const query = `UPDATE ?? SET imagen = ? WHERE ?? = ?`;
@@ -38,7 +38,7 @@ class ImagenesController {
     async obtenerImagen(tabla, campoId, id){
         try{
             //consultar el campo 'imagen' del registro
-            const [rows] = await db.query(`SELECT imagen FROM ?? = ?`, [tabla, campoId, id]);
+            const [rows] = await db.query(`SELECT imagen FROM ?? WHERE ?? = ?`, [tabla, campoId, id]);
 
             //validar si se encontro el registro
             if(rows.length === 0){
@@ -51,10 +51,10 @@ class ImagenesController {
             }
 
             //convertir la imagen de binario a base64
-            const ImagenesBase64 = rows[0].imagen.toString('base64');
+            const imagenesBase64 = rows[0].imagen.toString('base64');
 
             //retornar la imagen codificada
-            return{imagen: ImagenesBase64};
+            return{imagen: imagenesBase64};
         }catch(error){
             console.error('error al obtener la imagen:', error);
             throw error;
@@ -65,7 +65,7 @@ class ImagenesController {
     async eliminarImagen(tabla, campoId, id){
         try{
             //verificar que el registro exista
-            const [registro] = await db.query(`SELECT imagen FROM ?? WHERE ?? = ?`, [tabla, campoId, id]);
+            const [registro] = await db.query(`SELECT * FROM ?? WHERE ?? = ?`, [tabla, campoId, id]);
 
             if(registro.length === 0){
                 return {error: 'no se encontro el registro con el id proporcionado'};
@@ -88,7 +88,7 @@ class ImagenesController {
     }
 
     //metodo que inserta una imagen si no existe o actualiza si ya hay una
-    async insertarImagen(tabla, campoId, id, imagenBase64){
+    async insertarImagen(tabla, campoId, id, imagenesBase64){
         try{
             //verificar que el registro exista
             const [registro] = await db.query(`SELECT * FROM ?? WHERE ?? = ?`, [tabla, campoId, id ]);
@@ -98,7 +98,7 @@ class ImagenesController {
             }
 
             //convertir la imagen a formato binario
-            const bufferImagen = Buffer.from(imagenBase64, 'base64');
+            const bufferImagen = Buffer.from(imagenesBase64, 'base64');
 
             //consultar si ya hay una imagen existente
             const [imagenExistente] = await db.query(`SELECT imagen FROM ?? WHERE ?? = ?`, [tabla, campoId, id]);
@@ -131,10 +131,10 @@ class ImagenesController {
     }
 
     //metodo general que decide si subir una imagen o solo obtenerla
-    async procesarImagen(tabla, campoId, id, imagenBase64 = null){
+    async procesarImagen(tabla, campoId, id, imagenesBase64 = null){
         //si se pasa una imagen, la sube
-        if(imagenBase64){
-            return await this.subirImagen(tabla, campoId, id, imagenBase64);
+        if(imagenesBase64){
+            return await this.subirImagen(tabla, campoId, id, imagenesBase64);
         }else{
             //si no, intenta recuperarla
             return await this.obtenerImagen(tabla, campoId, id);

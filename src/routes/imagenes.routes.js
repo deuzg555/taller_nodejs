@@ -7,14 +7,14 @@ const { compare } = require('bcrypt');
 //ruta actualizar una imagen (recibe la imgaen en base64)
 router.put('/subir/:tabla/:campoId/:id', async (req, res)=>{
     const {tabla, campoId, id} = req.params;
-    const imagenBase64 = req.body.imaggen;
+    const imagenesBase64 = req.body.imagen;
 
-    if(!imagenBase64){
+    if(!imagenesBase64){
         return res.status(400).json({error: 'se requiere la imagen en base64'});
     }
 
     try{
-        const resulta = await imagenesController.procesarImagen(tabla, campoId, id, imagenBase64);
+        const resultado = await imagenesController.procesarImagen(tabla, campoId, id, imagenesBase64);
         res.json(resultado);
     }catch(error){
         console.error('error al subir la imagen', error);

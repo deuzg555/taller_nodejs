@@ -1,12 +1,12 @@
 //variables globales
-const API_URL = 'httpa://localhost:300/api'; //constante que almacena la URL que se conecta al servidor
+const API_URL = 'http://localhost:3000/api'; //constante que almacena la URL que se conecta al servidor
 let personas = []; //variables  que almacenara el listado de personas obtenidas del backend
 
 //Elementos del DOM
 const personaForm = document.getElementById('personaForm'); //formulario principal
 const tablaPersonaBody = document.getElementById('tablaPersonasBody');//cuerpo de la tabla donde se insertan las filas
 const btnCancelar = document.getElementById('btnCancelar');// este boton de cancelar limpia el formulario 
-const imagenInput = document.getAnimations('previewImagen');//elemento imagen de previsualizacion
+const imagenInput = document.getElementById('previewImagen');//elemento imagen de previsualizacion
 
 //even listeners
 document.addEventListener('DOMContentLoaded', cargarPersonas); //cuando el DOM este listo, se cargan las personas
@@ -70,7 +70,7 @@ async function manejarSubmit(e) {
         id_persona: document.getElementById('id_persona').value || null,
         nombre: document.getElementById('nombre').value,
         apellido: document.getElementById('apellido').value,
-        tipo_identificacion: document.getElementById('yipo_identificacion').value,
+        tipo_identificacion: document.getElementById('tipo_identificacion').value,
         nuip: parseInt(document.getElementById('nuip').value),
         email: document.getElementById('email').value,
         clave: document.getElementById('clave').value,
@@ -117,7 +117,7 @@ async function crearPersona(persona)
 // se envia el objeto de persona como cuerpo de la peticion en formato JSON
 // se espera la respuesta y se convierte a JSON
 {
-    const response = await fetch(`${API_URL}/persona`, {
+    const response = await fetch(`${API_URL}/personas`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(persona)
@@ -163,7 +163,7 @@ async function eliminarPersona(id)
     }
 }
 
-async function editarPersona()
+async function editarPersona(id)
 // se utiliza el metodo GET para obtener los datos de una persona existente 
 // se utiliza el ID de la persona para identificarla en el backend
 // se espera la respuesta y se convierte a JSON
@@ -234,11 +234,11 @@ function manejarImagen(e){
 
 //funcion para convertir imagen a base64
 function convertirImagenABase64(file){
-    return new promise ((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
-            //eliminar el prefijo "dat:image/jpeg;base64," del resultado
+            //eliminar el prefijo "data:image/jpeg;base64," del resultado
             const base64 = reader.result.split(',')[1];
             resolve(base64);
         };
