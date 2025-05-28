@@ -29,5 +29,7 @@ app.use('/api/personas', require('./routes/personas.routes'));
 
 app.use('/api/proveedores', require('./routes/proveedores.routes'));
 
+app.use('/api/auth', require('./routes/auth.routes'));
+
 module.exports = app;
 //exportar la app configurada para ser utilizada por el archivo principal del servidor (en este caso, el archivo server.js)

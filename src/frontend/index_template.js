@@ -10,10 +10,71 @@ const imagenInput = document.getElementById('imagen')//input de imagen
 const previewImagen = document.getElementById('previewImagen'); // imagen para previsualizar la subida
 
 //event listeners
-document.addEventListener('DOMContentLoaded', cargarPersonas);// cargar personas al iniciar la pagina
+document.addEventListener('DOMContentLoaded', () => {
+// verificar si el usuarioa esta autentificado
+    verificarAutenticacion();
+    
+    //mostrar nombre del usuario si esta autenticado
+    const usuarioNombre = localStorage.getItem('usuarioNombre');
+    const usuarioApellido = localStorage.getItem('usuarioApellido');
+
+    if(usuarioNombre && usuarioApellido){
+        const infoUsuario = document.createElement('div');
+        infoUsuario.innerHTML = `
+        <p>Bienvenido, ${usuarioNombre} ${usuarioApellido} |
+        <a href="#" id="btnCerrarSesion">Cerrar Sesion</a>
+        </p>`;
+        document.body.insertBefore(infoUsuario, document.body.firstChild);
+
+        //agregar listener para cerrar sesion
+        document.getElementById('btnCerrarSesion').addEventListener('click', cerrarSesion);
+    }
+    cargarPersonas();
+});// cargar personas al iniciar la pagina
 personaForm.addEventListener('submit', manejarSubmit); // enviar el formulario
 btnCancelar.addEventListener('click', limpiarFormulario); //boton de cancelar limpia el formulario
 imagenInput.addEventListener('change', manejarImagen); //cargar previsualizacion cuando se selecciona imagen
+
+function verificarAutenticacion(){
+    const usuarioId = localStorage.getItem('usuarioId');
+
+    if(!usuarioId){
+        //si no hay id usuario, redirigir al login
+        window.location.href = 'login.html';
+        return;
+    }
+
+    //verificar con el servidor si el usuario es valido
+    fetch(`${API_URL}/auth/verificar/${usuarioId}`)
+    .then(response =>{
+        if(!response.ok){
+            throw new Error ('sesion invalida'); 
+        }
+        return response.json();
+    })
+    .then(data =>{
+        if(data.success){
+        //si la verificacion falta , limpiar localstorage y redirigir
+        localStorage.clear();
+        window.location.href = 'login.html';
+    }
+})
+.catch(error => {
+    console.error('error al verificar sesion: ', error);
+    localStorage.clear();
+    window.location.href = 'login.html'
+});
+}
+
+function cerrarSesion(e){
+    e.preventDefault();
+    
+    //limpiar datos de autenticacion del localStorage
+    localStorage.clear();
+
+    //redirigir al login
+    window.location.href = 'login.html';
+}
 
 //funcion que obtiene personas del backend
 async function cargarPersonas(){
@@ -37,7 +98,7 @@ async function mostrarPersonas(){
     //recorre la lista de personas obtenidad desde el backend
     for(const persona of personas){
         //clona el contenido del template (la fila predefinida)
-        const clone = template.contentEditable.cloneNode(true);
+        const clone = template.content.cloneNode(true);
 
         //obtiene todas las celdas <td> dentro del clon
         const tds = clone.querySelectorAll('td');
@@ -48,7 +109,7 @@ async function mostrarPersonas(){
         //intenta obtener la imagen de la persona desde el backend
         try{
             //realiza una peticion GET al endpoint de imagen de la persona por su ID
-            const response = await fetch (`${API_URL}/imagenes/obtener/personas/id_persona/${persona.id_persona}`);
+            const response = await fetch (`${API_URL}/imagenes/obtener/personas/id_personas/${persona.id_personas}`);
 
             //convierte la respuesta en un objeto JSON
             const data = await response.json();
@@ -63,7 +124,7 @@ async function mostrarPersonas(){
         }
 
         //llena las celdas con los datos de la persona
-        tds[0].textContent = persona.id_persona;    //ID
+        tds[0].textContent = persona.id_personas;    //ID
         tds[1].textContent = persona.nombre;        //nombre
         tds[2].textContent = persona.apellido;      //apellido 
         tds[3].textContent = persona.email;         //email     
@@ -74,7 +135,7 @@ async function mostrarPersonas(){
         const btnElimina = clone.querySelector('.btn-eliminar')
 
         //asigna el evento de click  al boton de ditar, llamando a la funcion con ID de la persona
-        btnEditar.addEventListener('click', () => editarPersona(persona.id_persona));
+        btnEditar.addEventListener('click', () => editarPersona(persona.id_personas));
 
         //asigna un evento de click al boton de eliminar, llamado a la funcion con ID de la persona
         btnElimina.addEventListener('click', () => eliminarPersona(persona.eliminarPersona));
@@ -90,7 +151,7 @@ async function manejarSubmit(e){
 
     //obtiene los datos del formulario
     const persona = {
-        id_persona: document.getElementById('id_persona').value || null,
+        id_personas: document.getElementById('id_personas').value || null,
         nombre: document.getElementById('nombre').value,
         apellido: document.getElementById('apellido').value,
         tipo_identificacion: document.getElementById('tipo_identificacion').value,
@@ -102,13 +163,13 @@ async function manejarSubmit(e){
     }
 
     try{
-        if(persona.id_persona){
+        if(persona.id_personas){
             // si estamos editando (id_persona existe)
 
             //subir imagen si fue seleccionada
         if(imagenInput.file[0]){
             const imagenBase64 = await convertirImagenBase64(imagenInput.file[0]);
-            await fetch(`${API_URL}/imagenes/subir/personas/id_persona/${persona.id_persona}`,{
+            await fetch(`${API_URL}/imagenes/subir/personas/id_personas/${persona.id_personas}`,{
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({imagen: imagenBase64})
@@ -122,7 +183,7 @@ async function manejarSubmit(e){
         const nuevaPersona = await crearPersona(persona); //crear persona
         if(imagenInput.file[0]){
             const imagenBase64 = await convertirImagenBase64(imagenInput.files[0]);
-            await fetch(`${API_URL}/imagenes/insertar/persona/id_persona/${nuevaPersona.id}`,{
+            await fetch(`${API_URL}/imagenes/insertar/personas/id_personas/${nuevaPersona.id}`,{
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({imagen: imagenBase64})
@@ -149,7 +210,7 @@ async function crearPersona(persona){
 
 // actualiza una persona existente
 async function actualizarPersona(persona){
-    const response = await fetch(`${API_URL}/persona/${persona.id_persona}`,{
+    const response = await fetch(`${API_URL}/persona/${persona.id_personas}`,{
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(person)
@@ -161,7 +222,7 @@ async function actualizarPersona(persona){
 async function eliminarPersona(id){
     if(confirm('¿esta seguro de eliminar esta persona?')){
         try{
-            await fetch(`${API_URL}/imagenes/eliminar/persona/id_persona/${id}`,{method: 'DELETE'});//elimina imagen
+            await fetch(`${API_URL}/imagenes/eliminar/personas/id_persona/${id}`,{method: 'DELETE'});//elimina imagen
             await fetch(`${API_URL}/persona/${id}`, {method: 'DELETE'}); //elimina persona
             cargarPersonas(); //recarga la lista
         }catch(error){
@@ -173,9 +234,9 @@ async function eliminarPersona(id){
 
 //llena el formulario con los datos de una persona para editar
 async function editarPersona(id){
-    const persona = personas.find(p => p.id_persona === id);
+    const persona = personas.find(p => p.id_personas === id);
     if(persona){
-        document.getElementById('id_persona').value = persona.id_persona;
+        document.getElementById('id_personas').value = persona.id_personas;
         document.getElementById('nombre').value = persona.nombre;
         document.getElementById('apellido').value = persona.apellido;
         document.getElementById('tipo_identificacion').value = persona.tipo_identificacion;
@@ -207,7 +268,7 @@ async function editarPersona(id){
 //limpia todos los campos
 function limpiarFormulario(){
     personaForm.reset();
-    document.getElementById('id_persona').value = '';
+    document.getElementById('id_personas').value = '';
     previewImagen.style.display = 'none';
     previewImagen.src = '';
 }
